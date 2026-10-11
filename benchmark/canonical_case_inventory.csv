@@ -1,0 +1,82 @@
+case_id,provenance_type,clinical_domain,acuity_status,cci_score,difficulty_tier,safety_critical,eligibility_status
+CHAB-2026-GD-001,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,8,Tier 2,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-002,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,10,Tier 2,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-003,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,15,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-004,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,12,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-005,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,15,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-006,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,10,Tier 2,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-007,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,9,Tier 2,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-008,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,9,Tier 2,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-009,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,7,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-010,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,11,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-011,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,7,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-012,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,7,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-013,Guideline-Derived,Acute Coronary Syndromes,Acute/Emergent,5,Tier 1,No (SEV-1 Risk),Included
+CHAB-2026-GD-014,Guideline-Derived,Heart Failure,Acute/Emergent,13,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-015,Guideline-Derived,Heart Failure,Chronic/Outpatient,15,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-016,Guideline-Derived,Heart Failure,Acute/Emergent,7,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-017,Guideline-Derived,Heart Failure,Chronic/Outpatient,5,Tier 1,No (SEV-1 Risk),Included
+CHAB-2026-GD-018,Guideline-Derived,Heart Failure,Chronic/Outpatient,6,Tier 1,No (SEV-1 Risk),Included
+CHAB-2026-GD-019,Guideline-Derived,Heart Failure,Chronic/Outpatient,11,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-020,Guideline-Derived,Heart Failure,Chronic/Outpatient,8,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-021,Guideline-Derived,Arrhythmias & EP,Chronic/Outpatient,6,Tier 1,No (SEV-1 Risk),Included
+CHAB-2026-GD-022,Guideline-Derived,Arrhythmias & EP,Acute/Emergent,7,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-023,Guideline-Derived,Arrhythmias & EP,Subacute/Inpatient,14,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-024,Guideline-Derived,Arrhythmias & EP,Acute/Emergent,7,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-025,Guideline-Derived,Arrhythmias & EP,Acute/Emergent,12,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-026,Guideline-Derived,Arrhythmias & EP,Acute/Emergent,10,Tier 2,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-027,Guideline-Derived,Arrhythmias & EP,Acute/Emergent,10,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-028,Guideline-Derived,Arrhythmias & EP,Acute/Emergent,9,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-029,Guideline-Derived,Arrhythmias & EP,Chronic/Outpatient,11,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-030,Guideline-Derived,Valvular Heart Disease,Subacute/Inpatient,11,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-031,Guideline-Derived,Valvular Heart Disease,Subacute/Inpatient,12,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-032,Guideline-Derived,Valvular Heart Disease,Acute/Emergent,9,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-033,Guideline-Derived,Valvular Heart Disease,Chronic/Outpatient,7,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-034,Guideline-Derived,Valvular Heart Disease,Acute/Emergent,11,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-035,Guideline-Derived,Valvular Heart Disease,Acute/Emergent,12,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-036,Guideline-Derived,Cardiomyopathies,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-037,Guideline-Derived,Cardiomyopathies,Chronic/Outpatient,8,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-038,Guideline-Derived,Cardiomyopathies,Chronic/Outpatient,11,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-039,Guideline-Derived,Cardiomyopathies,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-040,Guideline-Derived,Cardiomyopathies,Acute/Emergent,13,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-041,Guideline-Derived,Cardiomyopathies,Acute/Emergent,10,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-042,Guideline-Derived,Congenital Heart Disease,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-043,Guideline-Derived,Congenital Heart Disease,Acute/Emergent,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-044,Guideline-Derived,Congenital Heart Disease,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-GD-045,Guideline-Derived,Congenital Heart Disease,Chronic/Outpatient,10,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-046,Guideline-Derived,Cardiovascular Prevention,Chronic/Outpatient,6,Tier 1,No (SEV-1 Risk),Included
+CHAB-2026-GD-047,Guideline-Derived,Cardiovascular Prevention,Chronic/Outpatient,12,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-048,Guideline-Derived,Aortic Diseases,Acute/Emergent,13,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-049,Guideline-Derived,Pulmonary Circulation,Acute/Emergent,7,Tier 2,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-050,Guideline-Derived,Pulmonary Circulation,Acute/Emergent,12,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-051,Guideline-Derived,Pulmonary Circulation,Chronic/Outpatient,12,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-GD-052,Guideline-Derived,Pulmonary Circulation,Chronic/Outpatient,13,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-053,Guideline-Derived,Pulmonary Circulation,Chronic/Outpatient,12,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-GD-054,Guideline-Derived,Cardiovascular Emergencies,Acute/Emergent,11,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-055,Guideline-Derived,Cardiovascular Emergencies,Acute/Emergent,16,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-GD-056,Guideline-Derived,Cardiovascular Emergencies,Acute/Emergent,13,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-001,Published Case-Report,Acute Coronary Syndromes,Acute/Emergent,11,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-002,Published Case-Report,Acute Coronary Syndromes,Acute/Emergent,11,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-003,Published Case-Report,Acute Coronary Syndromes,Acute/Emergent,12,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-004,Published Case-Report,Acute Coronary Syndromes,Acute/Emergent,15,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-005,Published Case-Report,Valvular Heart Disease,Subacute/Inpatient,13,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-CR-006,Published Case-Report,Arrhythmias & EP,Acute/Emergent,11,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-007,Published Case-Report,Arrhythmias & EP,Acute/Emergent,13,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-008,Published Case-Report,Arrhythmias & EP,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-CR-009,Published Case-Report,Arrhythmias & EP,Chronic/Outpatient,9,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-CR-010,Published Case-Report,Heart Failure,Acute/Emergent,14,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-011,Published Case-Report,Heart Failure,Chronic/Outpatient,9,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-CR-012,Published Case-Report,Heart Failure,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-CR-013,Published Case-Report,Heart Failure,Acute/Emergent,12,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-014,Published Case-Report,Aortic Diseases,Acute/Emergent,15,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-015,Published Case-Report,Aortic Diseases,Acute/Emergent,13,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-016,Published Case-Report,Cardiomyopathies,Chronic/Outpatient,11,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-CR-017,Published Case-Report,Cardiomyopathies,Chronic/Outpatient,11,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-CR-018,Published Case-Report,Cardiomyopathies,Acute/Emergent,14,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-019,Published Case-Report,Congenital Heart Disease,Chronic/Outpatient,12,Tier 3,No (SEV-1 Risk),Included
+box_id,provenance_type,clinical_domain,acuity_status,cci_score,difficulty_tier,safety_critical,eligibility_status
+CHAB-2026-CR-020,Published Case-Report,Congenital Heart Disease,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
+CHAB-2026-CR-021,Published Case-Report,Congenital Heart Disease,Acute/Emergent,11,Tier 3,Yes (SEV-2 Risk),Included
+CHAB-2026-CR-022,Published Case-Report,Pulmonary Circulation,Acute/Emergent,14,Tier 3,Yes (SEV-3 Risk),Included
+CHAB-2026-CR-023,Published Case-Report,Pulmonary Circulation,Chronic/Outpatient,11,Tier 3,No (SEV-1 Risk),Included
+CHAB-2026-CR-024,Published Case-Report,Cardiovascular Emergencies,Acute/Emergent,15,Tier 3,Yes (SEV-3 Risk),Included
