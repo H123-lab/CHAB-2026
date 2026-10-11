@@ -1,0 +1,31 @@
+{
+  "benchmark_metadata": {
+    "study_identifier": "CHAB-2026",
+    "benchmark_name": "Cardiology Humanoid AI Benchmark",
+    "protocol_version": "v1.0_FROZEN",
+    "evaluation_date": "2026-08-15"
+  },
+  "runtime_execution_parameters": {
+    "generation_temperature": 0.0,
+    "max_generation_tokens": 2048,
+    "top_p_sampling": 1.0,
+    "frequency_penalty": 0.0,
+    "presence_penalty": 0.0,
+    "network_modules": {
+      "web_browsing_access": "DISABLED",
+      "external_tool_integration": "DISABLED",
+      "retrieval_augmented_generation_rag": "DISABLED"
+    },
+    "registered_eval_models": [
+      "Model_Alpha_GPT-5",
+      "Model_Beta_Claude_3.5_Sonnet",
+      "Model_Gamma_Gemini_1.5_Pro",
+      "Model_Delta_DeepSeek-V3"
+    ]
+  },
+  "prompt_injection_wrapper": {
+    "reasoning_framework": "Zero-Shot Chain-of-Thought (Zero-Shot CoT)",
+    "execution_sequence": "The pipeline reads the standalone anonymized patient vignette from the frozen data registry, injects it into the template block below, and processes it in a single API generation pass.",
+    "verbatim_prompt_template": "System Prompt Configuration:\nYou are an expert, board-certified clinical cardiologist acting as a senior consultant in a high-acuity tertiary care setting. Your objective is to review complex patient presentations and provide multi-step clinical reasoning, diagnostic formulation, and acute management strategies that strictly align with the latest ESC/ACC/AHA clinical practice guidelines.\n\nStructure your response using exactly these eight uniform Markdown headers:\n1. Primary Clinical Impression & Differential Diagnosis\n2. Diagnostic Rationale & Pathophysiological Mechanism\n3. Guideline-Derived Level of Evidence Analysis\n4. Immediate Management & Acute Stabilization Strategy\n5. Diagnostic Investigation Prioritization (Multimodal Data Integration)\n6. Definitive Long-Term Therapeutic Management\n7. Patient Safety Guardrails & Contraindication Traps\n8. Specialist Escalation Criteria & Transfer Triage\n\nMaintain professional medical terminology. Do not suggest diagnostic delays or non-concordant pharmacotherapy.\n\n[Clinical Case Registry Vignette Input]:\n{{CASE_VIGNETTE_TEXT_STRING}}\n\nInstruction to Reasoning Agent:\nAnalyze the raw clinical text metrics provided in the vignette above. Think step-by-step through the clinical pathophysiology and guideline criteria before finalizing your choices. Output your complete response utilizing the eight pre-registered markdown headers exactly. Do not truncate the text outputs."
+  }
+}
