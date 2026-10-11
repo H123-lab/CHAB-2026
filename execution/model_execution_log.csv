@@ -1,0 +1,5 @@
+run_id,model_label,provider_model_identifier,upstream_provider,run_date,interface_api,temperature,top_p,max_tokens,web_browsing,external_tools,access_mode
+RUN-001,Model Alpha,gpt-5-preview-2026-05,OpenAI Inc.,2026-07-19,Python API Endpoint,0.0,1.0,2048,DISABLED,DISABLED,Deterministic Automated Batch
+RUN-002,Model Beta,claude-3-5-sonnet-v1-2026,Anthropic PBC.,2026-07-19,Python API Endpoint,0.0,1.0,2048,DISABLED,DISABLED,Deterministic Automated Batch
+RUN-003,Model Gamma,gemini-1.5-pro-exp-08,Google LLC,2026-07-20,Google Vertex AI API,0.0,1.0,2048,DISABLED,DISABLED,Deterministic Automated Batch
+RUN-004,Model Delta,deepseek-v3-dense-06,DeepSeek Inc.,2026-07-21,Python API Endpoint,0.0,1.0,2048,DISABLED,DISABLED,Deterministic Automated Batch
