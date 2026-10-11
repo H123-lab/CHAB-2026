@@ -1,0 +1,38 @@
+{
+  "manifest_metadata": {
+    "project_id": "CHAB-2026",
+    "title": "Cardiology Humanoid AI Benchmark",
+    "open_science_framework_id": "237wu",
+    "github_repository": "https://github.com",
+    "reproducibility_tier": "Gold Standard - Fully Audited",
+    "manifest_last_updated": "2026-10-11"
+  },
+  "analytical_population_lock": {
+    "canonical_cases_count": 80,
+    "evaluated_models_count": 4,
+    "total_primary_observations": 320,
+    "total_raw_reviewer_records": 640,
+    "excluded_overflow_cases": [
+      "HF-GD-008",
+      "HF-GD-009",
+      "HF-GD-010",
+      "VHD/AORTA-LIT-004"
+    ],
+    "human_reference_cohorts": {
+      "junior_cardiology_residents": "Descriptive baseline reference ONLY",
+      "attending_cardiologists": "Gold-standard boundary reference ONLY",
+      "primary_pipeline_status": "EXCLUDED_FROM_OMNIBUS_AI_INFERENCE"
+    }
+  },
+  "primary_statistical_analysis_plan_sap": {
+    "continuous_outcome": {
+      "endpoint": "Composite CHAB Score (0-100% Scale)",
+      "global_omnibus_test": "Repeated-Measures Non-Parametric Friedman Test",
+      "omnibus_constraints": {
+        "degrees_of_freedom": 3,
+        "verified_chi_squared": 68.35,
+        "p_value_threshold": "= 5.0 points OR domain delta >= 1.0 point OR safety classification mismatch",
+    "adjudication_status": "100% Resolved by Senior Referee prior to final database freeze",
+    "vignette_leakage_audit_code_c03": "Addressed - Guideline strings localized and isolated in Blinded_Evaluation configurations"
+  }
+}
