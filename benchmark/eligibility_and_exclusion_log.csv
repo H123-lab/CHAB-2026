@@ -1,0 +1,26 @@
+candidate_id,provenance_track,clinical_domain,screening_date,screening_decision,exclusion_reason_code,detailed_methodological_rationale
+CHAB-CAND-001,Guideline-Derived,Acute Coronary Syndromes,2026-02-14,Included,None,Meets all guideline-mapping requirements for STEMI pathways.
+CHAB-CAND-012,Guideline-Derived,Arrhythmias & EP,2026-02-18,Excluded,EXC-AMB-01,Unresolved clinical ambiguity across guidelines regarding rhythm control thresholds.
+CHAB-CAND-019,Published Case-Report,Valvular Heart Disease,2026-03-02,Excluded,EXC-RED-02,Overlapping clinical question regarding transcatheter aortic valve replacement.
+CHAB-CAND-024,Guideline-Derived,Heart Failure,2026-03-11,Included,None,Meets all protocol criteria for acute decompensated heart failure shock.
+CHAB-CAND-031,Guideline-Derived,Cardiomyopathies,2026-03-15,Excluded,EXC-AMB-03,Conflicting guideline updates between ESC and ACC/AHA structural classifications.
+CHAB-CAND-044,Published Case-Report,Acute Coronary Syndromes,2026-04-05,Excluded,EXC-RED-01,Redundant clinical presentation matching existing canonical case CHAB-2026-GD-003.
+CHAB-CAND-050,Guideline-Derived,Pulmonary Circulation,2026-04-12,Included,None,Meets protocol criteria for massive pulmonary embolism surgical triage nodes.
+CHAB-CAND-057,Guideline-Derived,Arrhythmias & EP,2026-04-22,Excluded,EXC-AMB-02,Incomplete case vignette specifications failing baseline ECG diagnostic thresholds.
+CHAB-CAND-062,Published Case-Report,Heart Failure,2026-05-02,Excluded,EXC-RED-03,Redundant clinical question regarding mechanical circulatory support configurations.
+CHAB-CAND-069,Guideline-Derived,Congenital Heart Disease,2026-05-14,Included,None,Meets structural criteria for adult congenital heart disease secundum ASD closure.
+CHAB-CAND-071,Guideline-Derived,Valvular Heart Disease,2026-05-18,Excluded,EXC-AMB-01,Major clinical ambiguity regarding intervention timing in asymptomatic severe MR.
+CHAB-CAND-075,Published Case-Report,Aortic Diseases,2026-05-24,Excluded,EXC-AMB-04,Missing core diagnostic imaging metrics preventing definitive gold-standard construction.
+CHAB-CAND-079,Guideline-Derived,Cardiovascular Prevention,2026-06-01,Included,None,Meets criteria for primary prevention lipid target optimization controls.
+CHAB-CAND-082,Guideline-Derived,Acute Coronary Syndromes,2026-06-05,Excluded,EXC-RED-01,Redundant clinical question regarding dual antiplatelet therapy durations.
+CHAB-CAND-085,Published Case-Report,Cardiomyopathies,2026-06-11,Excluded,EXC-AMB-02,Unresolved diagnostic controversy regarding specific amyloidosis mimics.
+CHAB-CAND-088,Guideline-Derived,Cardiovascular Emergencies,2026-06-19,Included,None,Meets criteria for acute cardiac tamponade urgent operative windows.
+CHAB-CAND-091,Guideline-Derived,Heart Failure,2026-06-22,Excluded,EXC-AMB-03,Conflicting regional practice variation regarding advanced inotropic support weaning.
+CHAB-CAND-093,Published Case-Report,Pulmonary Circulation,2026-06-25,Excluded,EXC-RED-02,Redundant presentation mapping idiopathic pulmonary arterial hypertension targets.
+CHAB-CAND-095,Guideline-Derived,Aortic Diseases,2026-07-02,Included,None,Meets baseline criteria for acute type A aortic dissection hemodynamic targets.
+CHAB-CAND-097,Published Case-Report,Arrhythmias & EP,2026-07-05,Excluded,EXC-AMB-01,Clinical history contains incomplete documentation of drug-induced QT prolongation details.
+CHAB-CAND-099,Guideline-Derived,Heart Failure,2026-07-10,Excluded,EXC-RED-03,Exceeds pre-registered heart failure subspecialty track batch quota baseline.
+CHAB-CAND-101,Published Case-Report,Cardiomyopathies,2026-07-12,Excluded,EXC-AMB-04,Vignette references localized pediatric criteria outside adult trial boundaries.
+CHAB-CAND-103,Guideline-Derived,Valvular Heart Disease,2026-07-15,Excluded,EXC-RED-01,Redundant clinical scenario addressing baseline asymptomatic aortic stenosis.
+CHAB-CAND-104,Published Case-Report,Cardiovascular Emergencies,2026-07-18,Excluded,EXC-AMB-02,Unresolved multidisciplinary conflict regarding surgical vs endovascular access channels.
+CHAB-CAND-105,Guideline-Derived,Pulmonary Circulation,2026-07-20,Excluded,EXC-RED-02,Redundant clinical pathway covering chronic thromboembolic pulmonary hypertension.
