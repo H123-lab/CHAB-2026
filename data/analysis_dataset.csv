@@ -1,0 +1,11 @@
+case_id,model_label,provenance_track,cci_score,difficulty_tier,chab_score,inclusion_status
+CHAB-2026-GD-001,Model Alpha,Guideline-Derived,8,Tier 2,88.42,Included
+CHAB-2026-GD-001,Model Beta,Guideline-Derived,8,Tier 2,85.16,Included
+CHAB-2026-GD-001,Model Gamma,Guideline-Derived,8,Tier 2,81.35,Included
+CHAB-2026-GD-001,Model Delta,Guideline-Derived,8,Tier 2,78.91,Included
+CHAB-2026-GD-002,Model Alpha,Guideline-Derived,10,Tier 2,90.25,Included
+CHAB-2026-GD-056,Model Delta,Guideline-Derived,13,Tier 3,74.50,Included
+CHAB-2026-CR-001,Model Alpha,Published Case-Report,11,Tier 3,85.50,Included
+CHAB-2026-CR-024,Model Delta,Published Case-Report,15,Tier 3,71.25,Included
+HF-GD-008,Model Alpha,Guideline-Derived,9,Tier 2,83.00,Excluded_Overflow
+VHD/AORTA-LIT-004,Model Delta,Published Case-Report,14,Tier 3,70.00,Excluded_Overflow
