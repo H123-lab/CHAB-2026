@@ -1,0 +1,11 @@
+case_id,model_label,output_file_id,scoring_record_count,inclusion_exclusion_status
+CHAB-2026-GD-001,Model Alpha,OUT-M1-GD001,2,Included_Primary_Analysis
+CHAB-2026-GD-001,Model Beta,OUT-M2-GD001,2,Included_Primary_Analysis
+CHAB-2026-GD-001,Model Gamma,OUT-M3-GD001,2,Included_Primary_Analysis
+CHAB-2026-GD-001,Model Delta,OUT-M4-GD001,2,Included_Primary_Analysis
+CHAB-2026-GD-002,Model Alpha,OUT-M1-GD002,2,Included_Primary_Analysis
+CHAB-2026-GD-056,Model Delta,OUT-M4-GD056,2,Included_Primary_Analysis
+CHAB-2026-CR-001,Model Alpha,OUT-M1-CR001,2,Included_Primary_Analysis
+CHAB-2026-CR-024,Model Delta,OUT-M4-CR024,2,Included_Primary_Analysis
+HF-GD-008,Model Alpha,OUT-OV-M1-008,0,Excluded_Exploratory_Overflow
+VHD/AORTA-LIT-004,Model Delta,OUT-OV-M4-004,0,Excluded_Exploratory_Overflow
