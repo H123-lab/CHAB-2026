@@ -1,0 +1,7 @@
+case_id,model_label,clinical_domain,error_type,provenance_track,physiological_consequence,severity_code
+CHAB-2026-GD-025,Model Delta,Arrhythmias & EP,Contraindicated Pharmacotherapy,Guideline-Derived,IV Verapamil in pre-excited AF; risks ventricular fibrillation,SEV-3
+CHAB-2026-GD-045,Model Delta,Congenital Heart Disease,Absolute Contraindication Violation,Guideline-Derived,Systemic vasodilators in Eisenmenger; worsens right-to-left shunt,SEV-3
+CHAB-2026-CR-018,Model Gamma,Cardiomyopathies,Contraindicated Interventional Strategy,Published Case-Report,Thrombolysis in aortic tear mimic; causes hemopericardium,SEV-3
+CHAB-2026-GD-035,Model Gamma,Valvular Heart Disease,Delayed Triage / Diagnosis Omission,Guideline-Derived,Delayed surgery in acute IE valve heart failure; causes cardiogenic shock,SEV-2
+CHAB-2026-CR-024,Model Delta,Cardiovascular Emergencies,Management Sequence Deviation,Published Case-Report,Delayed mechanical embolectomy for saddle PE; increases mortality risk,SEV-2
+CHAB-2026-GD-004,Model Beta,Acute Coronary Syndromes,Stabilization Delay,Guideline-Derived,Delayed revascularization in myocardial cardiogenic shock,SEV-2
