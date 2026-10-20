@@ -1,0 +1,7 @@
+domain_id,domain_classification_name,cohen_kappa,cohen_kappa_95_ci,adjudication_count,adjudication_percentage
+D1,Diagnostic Accuracy,0.88,0.85-0.91,9,11.25%
+D2,Investigation Appropriateness,0.86,0.82-0.89,11,13.75%
+D3,Guideline Adherence (ESC/ACC),0.89,0.86-0.92,8,10.00%
+D4,Immediate Management & Triage,0.85,0.81-0.88,12,15.00%
+D6,Patient Safety & Error Avoidance,0.92,0.89-0.95,3,3.75%
+OVERALL,Composite CHAB Score (ICC 2_1),0.91,0.895-0.928,46,14.40%
