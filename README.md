@@ -1,4 +1,4 @@
-# CHAB-2026: Cardiology Humanoid AI Benchmark
+# CHAB-2026: Cardiology AI Benchmark
 
 An open-science replication repository for the Cardiology Humanoid AI Benchmark (CHAB-2026). This repository hosts the canonical data matrices, standardized prompt profiles, and non-parametric statistical calculation code to ensure full reproducibility.
 
