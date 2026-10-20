@@ -1,0 +1,5 @@
+trial_id,blinded_grader_token,matched_case_sample,clinician_mean_score,model_alpha_mean_score,observed_paired_delta,adjudication_required_flag,pipeline_status
+VAL-HUM-001,EXPERT_CARDIOLOGIST_01,10_Random_Matched_Set,94.20,88.42,-5.78_Points,0_Zero_Drift,Awaiting_Prospective_Execution
+VAL-HUM-002,EXPERT_CARDIOLOGIST_02,10_Random_Matched_Set,95.50,88.42,-7.08_Points,0_Zero_Drift,Awaiting_Prospective_Execution
+VAL-HUM-003,EXPERT_CARDIOLOGIST_03,10_Random_Matched_Set,93.80,88.42,-5.38_Points,1_Triggered,Awaiting_Prospective_Execution
+VAL-HUM-004,EXPERT_CARDIOLOGIST_04,10_Random_Matched_Set,95.00,88.42,-6.58_Points,0_Zero_Drift,Awaiting_Prospective_Execution
