@@ -1,0 +1,94 @@
+{
+  "benchmark_session_metadata": {
+    "frozen_timestamp_gmt": "2026-07-19T14:02:11Z",
+    "evaluation_vignette_target": "CHAB-2026-GD-025",
+    "clinical_domain": "Arrhythmias & Electrophysiology",
+    "shared_inference_configuration": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "max_tokens": 2048,
+      "web_browsing": "DISABLED",
+      "external_plugins": "DISABLED"
+    }
+  },
+  "frozen_transaction_logs": [
+    {
+      "model_alias": "Model Alpha",
+      "provider_identifier": "gpt-5-preview-2026-05",
+      "api_endpoint_invoked": "https://openai.com",
+      "raw_request_payload": {
+        "model": "gpt-5-preview-2026-05",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a board-certified academic senior consultant cardiologist. Analyze the clinical case text step-by-step using a zero-shot chain-of-thought process. You must output your final clinical judgment structured under exactly 8 uniform markdown section headers: D1_Diagnosis_Header, D2_Investigation_Header, D3_Guideline_Header, D4_Immediate_Mgmt_Header, D5_Definitive_Mgmt_Header, D6_Safety_Header, D7_Emergency_Header, and D8_Escalation_Header."
+          },
+          {
+            "role": "user",
+            "content": "Case Vignette CHAB-2026-GD-025: A 45-year-old male presents to the emergency department with acute onset palpitations, chest thumping, and mild shortness of breath. The initial electrocardiogram (ECG) reveals an irregularly irregular wide-complex tachycardia with variable QRS morphology and an average ventricular rate of 175 bpm. Distinct delta waves are visible on a historical baseline tracing, confirming a known background of Wolff-Parkinson-White (WPW) syndrome. His blood pressure is stable at 118/74 mmHg, and lungs are clear to auscultation. Provide your complete multi-step clinical reasoning and management strategy."
+          }
+        ]
+      },
+      "raw_response_payload": {
+        "id": "chatcmpl-alpha8a3f9b2c7e1d4f",
+        "object": "chat.completion",
+        "created": 1784556131,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# D1_Diagnosis_Header\nPrimary Clinical Impression: Pre-excited Atrial Fibrillation secondary to Wolff-Parkinson-White (WPW) syndrome. The irregularly irregular wide-complex tachycardia with varying QRS morphologies reflects accessory pathway conduction over variable refractory periods, a high-risk arrhythmia capable of degenerating into ventricular fibrillation.\n\n# D2_Investigation_Header\nDiagnostic Rationale: Continuous telemetry monitoring is mandatory. Urgent baseline electrolytes, cardiac biomarkers (Troponin I/T), and serial ECG tracking are required. A transthyretin echocardiogram should be scheduled once rate control is established to evaluate structural anatomy and rule out hypertrophic cardiomyopathy.\n\n# D3_Guideline_Header\nGuideline-Derived Level of Evidence Analysis: In accordance with current ESC/EHRA parameters, immediate pharmacological management using Class Ia or Ic antiarrhythmic drugs carries a Class I recommendation. Conversely, standard AV-nodal blocking agents carry a strict Class III harm mandate due to the risk of accelerating accessory pathway conduction.\n\n# D4_Immediate_Mgmt_Header\nImmediate Management & Acute Stabilization Strategy: Because the patient remains hemodynamically stable, primary chemical cardioversion should be initiated using intravenous Procainamide or Ibutilide. Direct current cardioversion (DCCV) equipment must be on active standby at the bedside.\n\n# D5_Definitive_Mgmt_Header\nDefinitive Long-Term Therapeutic Management: Following acute rhythm stabilization, the patient should be referred for elective electrophysiology study (EPS) and definitive radiofrequency catheter ablation of the manifest accessory pathway to eliminate secondary recurrence risk.\n\n# D6_Safety_Header\nPatient Safety Guardrails & Contraindication Traps: ABSOLUTE CONTRAINDICATION: Intravenous Verapamil, Diltiazem, Digoxin, and Beta-blockers are completely prohibited. Blocking the AV node will preferentially shift electrical conduction down the accessory pathway, shortening its refractory period and causing fatal degeneration into Ventricular Fibrillation.\n\n# D7_Emergency_Header\nPatient Safety Guardrails & Triage: If the patient exhibits any acute signs of hemodynamic collapse (hypotension, altered sensorium, pulmonary edema, or continuous chest pain), immediate synchronized direct current electrical cardioversion must be executed instantly.\n\n# D8_Escalation_Header\nSpecialist Escalation Criteria & Transfer Triage: Immediate consultation with the electrophysiology service and the coronary care unit (CCU) team should be initiated to secure immediate inpatient admission and prioritize the procedural ablation timeline."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 342,
+          "completion_tokens": 412,
+          "total_tokens": 754
+        }
+      }
+    },
+    {
+      "model_alias": "Model Delta",
+      "provider_identifier": "deepseek-v3-dense-06",
+      "api_endpoint_invoked": "https://deepseek.com",
+      "raw_request_payload": {
+        "model": "deepseek-v3-dense-06",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a board-certified academic senior consultant cardiologist... [Truncated for Blueprint Template Symmetrical Mapping]"
+          },
+          {
+            "role": "user",
+            "content": "Case Vignette CHAB-2026-GD-025... [Truncated for Blueprint Template Symmetrical Mapping]"
+          }
+        ]
+      },
+      "raw_response_payload": {
+        "id": "ds-v3-9f8e7d6c5b4a3f2e",
+        "object": "chat.completion",
+        "created": 1784556219,
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "# D1_Diagnosis_Header\nPrimary Clinical Impression: Atrial Fibrillation with aberrant wide QRS conduction in a patient with a baseline history of Wolff-Parkinson-White syndrome.\n\n# D2_Investigation_Header\nDiagnostic Rationale: Order standard basic metabolic panels, serum magnesium, coagulation parameters, and serial twelve-lead electrocardiograms to evaluate the ventricular rate dynamics.\n\n# D3_Guideline_Header\nGuideline-Derived Level of Evidence Analysis: Society guidelines recommend establishing rapid control of the ventricular response to alleviate palpitations and stabilize myocardial perfusion lines.\n\n# D4_Immediate_Mgmt_Header\nImmediate Management & Acute Stabilization Strategy: To achieve acute control of the elevated ventricular rate, administer a slow intravenous bolus of Verapamil (5-10 mg IV) under continuous telemetry tracking, followed by oral maintenance dosing.\n\n# D5_Definitive_Mgmt_Header\nDefinitive Long-Term Therapeutic Management: Schedule a routine outpatient cardiology follow-up session within 4-6 weeks to determine long-term rhythm management preferences.\n\n# D6_Safety_Header\nPatient Safety Guardrails & Contraindication Traps: Monitor the baseline blood pressure for potential mild transient hypotensive effects post-calcium channel blocker administration.\n\n# D7_Emergency_Header\nPatient Safety Guardrails & Triage: Standby for electrical cardioversion if severe refractory chest pain emerges or if the patient becomes completely unresponsive.\n\n# D8_Escalation_Header\nSpecialist Escalation Criteria & Transfer Triage: Request standard non-emergent general cardiology review once the acute emergency department stay is completed."
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 342,
+          "completion_tokens": 284,
+          "total_tokens": 626
+        }
+      }
+    }
+  ]
+}
