@@ -1,0 +1,6 @@
+case_id,model_label,run_1_score,run_2_score,run_3_score,run_4_score,run_5_score,flip_rate_percentage,stability_status
+CHAB-2026-GD-001,Model Alpha,95.00,95.00,95.00,95.00,95.00,0.00%,Stable_Deterministic
+CHAB-2026-GD-001,Model Delta,82.50,82.50,82.50,82.50,82.50,0.00%,Stable_Deterministic
+CHAB-2026-GD-025,Model Delta,62.50,62.50,62.50,62.50,62.50,0.00%,Stable_Deterministic
+CHAB-2026-CR-018,Model Gamma,55.00,55.00,55.00,55.00,55.00,0.00%,Stable_Deterministic
+CHAB-2026-CR-024,Model Delta,70.00,70.00,70.00,70.00,70.00,0.00%,Stable_Deterministic
