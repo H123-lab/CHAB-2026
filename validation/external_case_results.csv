@@ -1,0 +1,5 @@
+validation_id,external_source_name,held_out_case_count,model_evaluated,mean_external_score,stratified_tier_effect,generalization_loss_delta,pipeline_status
+VAL-EXT-001,CardioBench_Subsample_Sync,15,Model Alpha,87.40,Significant_P_0012,-1.02_Points,Awaiting_Prospective_Execution
+VAL-EXT-002,CardioBench_Subsample_Sync,15,Model Beta,83.90,Significant_P_0012,-1.26_Points,Awaiting_Prospective_Execution
+VAL-EXT-003,CardioBench_Subsample_Sync,15,Model Gamma,79.50,Significant_P_0012,-1.85_Points,Awaiting_Prospective_Execution
+VAL-EXT-004,CardioBench_Subsample_Sync,15,Model Delta,76.10,Significant_P_0012,-2.81_Points,Awaiting_Prospective_Execution
