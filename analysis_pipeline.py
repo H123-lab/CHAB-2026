@@ -38,15 +38,14 @@ MODELS = [
 ]
 
 
-def load_and_validate_workbook(filepath: str):
-    """Loads raw sheets and enforces canonical cohort boundaries (N=80, n=320)."""
+def load_and_validate_dataset(filepath: str):
     if not os.path.exists(filepath):
-        # Fallback check for root directory placement
-        alt_path = os.path.basename(filepath)
-        if os.path.exists(alt_path):
-            filepath = alt_path
-        else:
-            raise FileNotFoundError(f"Master workbook not found at {filepath}")
+        raise FileNotFoundError(f"Master CSV not found at {filepath}")
+    df = pd.read_csv(filepath)
+    df = df[df["Model Name"].isin(MODELS)].copy()
+    # Rename column to match downstream merge expectations
+    df = df.rename(columns={"Safety_Severity": "Safety Error (SEV)"})
+    return df[["Case ID", "Source Type"]].drop_duplicates(), df
 
     xl = pd.ExcelFile(filepath)
     sheet_names = xl.sheet_names
@@ -232,7 +231,9 @@ if __name__ == "__main__":
         print(f"\n[EXECUTION HALTED] {exc}", file=sys.stderr)
         sys.exit(1)
 
-        
+        CSV_PATH = "data/CHAB-2026_Adjudicated_9Domain_Master_Scores.csv"
+    sources_data, ratings_data = load_and_validate_dataset(CSV_PATH)
+
    
    
 
