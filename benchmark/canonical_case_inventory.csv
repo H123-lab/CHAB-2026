@@ -74,7 +74,6 @@ CHAB-2026-CR-016,Published Case-Report,Cardiomyopathies,Chronic/Outpatient,11,Ti
 CHAB-2026-CR-017,Published Case-Report,Cardiomyopathies,Chronic/Outpatient,11,Tier 3,No (SEV-1 Risk),Included
 CHAB-2026-CR-018,Published Case-Report,Cardiomyopathies,Acute/Emergent,14,Tier 3,Yes (SEV-3 Risk),Included
 CHAB-2026-CR-019,Published Case-Report,Congenital Heart Disease,Chronic/Outpatient,12,Tier 3,No (SEV-1 Risk),Included
-box_id,provenance_type,clinical_domain,acuity_status,cci_score,difficulty_tier,safety_critical,eligibility_status
 CHAB-2026-CR-020,Published Case-Report,Congenital Heart Disease,Chronic/Outpatient,10,Tier 2,No (SEV-1 Risk),Included
 CHAB-2026-CR-021,Published Case-Report,Congenital Heart Disease,Acute/Emergent,11,Tier 3,Yes (SEV-2 Risk),Included
 CHAB-2026-CR-022,Published Case-Report,Pulmonary Circulation,Acute/Emergent,14,Tier 3,Yes (SEV-3 Risk),Included
