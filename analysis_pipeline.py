@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -94,7 +95,10 @@ def load_canonical_data(path=INPUT):
     # Human-reference rows are excluded by retaining only the four prespecified AI arms.
     frame = frame[frame["Model Name"].isin(MODELS)].copy()
     overflow_mask = frame["Case ID"].str.contains("OVERFLOW", case=False, na=False)
-    overflow_mask |= frame["Case ID"].isin(OVERFLOW_IDS)
+    overflow_patterns = "|".join(re.escape(value) for value in sorted(OVERFLOW_IDS, key=len, reverse=True))
+    overflow_mask |= frame["Case ID"].str.contains(
+        r"(?:^|[-/])(?:" + overflow_patterns + r")$", case=False, na=False, regex=True
+    )
     frame = frame.loc[~overflow_mask].copy()
 
     if frame["Case ID"].nunique() != 80 or len(frame) != 320:
