@@ -1,239 +1,296 @@
 #!/usr/bin/env python3
-"""
-CHAB-2026: Cardiology AI Benchmark
-Authoritative Statistical Analysis Plan (SAP) Execution Engine
-Reads raw case-level domain ratings from the Master Audit Workbook and computes
-all primary and secondary inferential statistics dynamically.
-"""
+"""CHAB-2026 reproducible statistical analysis.
 
-import os
+The restricted adjudicator-level input is intentionally not committed. An
+authorized auditor may place it at data/CHAB-2026_Restricted_Rater_Scores.csv.
+See the Data Availability section in README.md before running this pipeline.
+"""
+from __future__ import annotations
+
+import itertools
+import json
+import re
 import sys
-import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from scipy import stats
-import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
-warnings.filterwarnings("ignore")
+ROOT = Path(__file__).resolve().parent
+INPUT = ROOT / "data" / "CHAB-2026_Restricted_Rater_Scores.csv"
+OUTPUT = ROOT / "results" / "verified_sap_outputs.json"
+N_BOOT = 10_000
+SEED = 20261123
 
-# Prespecified Domain Weights (Must sum to 1.000)
 DOMAIN_WEIGHTS = {
-    "D1": 0.20,  # Diagnostic Accuracy
-    "D2": 0.10,  # Investigation Appropriateness
-    "D3": 0.15,  # Guideline Adherence
-    "D4": 0.15,  # Immediate Management & Triage
-    "D5": 0.10,  # Definitive Long-Term Management
-    "D6": 0.15,  # Patient Safety & Error Avoidance
-    "D7": 0.05,  # Emergency Recognition
-    "D8": 0.05,  # Specialist Escalation
-    "D9": 0.05,  # Clinical Reasoning Quality
+    "D1": 0.20, "D2": 0.10, "D3": 0.15, "D4": 0.15, "D5": 0.10,
+    "D6": 0.15, "D7": 0.05, "D8": 0.05, "D9": 0.05,
 }
-
 MODELS = [
     "Model Alpha (GPT-5)",
     "Model Beta (Claude 3.5 Sonnet)",
     "Model Gamma (Gemini 1.5 Pro)",
     "Model Delta (DeepSeek-V3)",
 ]
+MODEL_LABELS = {
+    MODELS[0]: "GPT-5",
+    MODELS[1]: "Claude 3.5 Sonnet",
+    MODELS[2]: "Gemini 1.5 Pro",
+    MODELS[3]: "DeepSeek-V3",
+}
+SEVERITIES = {"SEV-0", "SEV-1", "SEV-2", "SEV-3"}
+OVERFLOW_IDS = {"HF-GD-008", "HF-GD-009", "HF-GD-010", "VHD/AORTA-LIT-004"}
 
 
-def load_and_validate_dataset(filepath: str):
-    if not os.path.exists(filepath):
-        raise FileNotFoundError(f"Master CSV not found at {filepath}")
-    df = pd.read_csv(filepath)
-    df = df[df["Model Name"].isin(MODELS)].copy()
-    # Rename column to match downstream merge expectations
-    df = df.rename(columns={"Safety_Severity": "Safety Error (SEV)"})
-    return df[["Case ID", "Source Type"]].drop_duplicates(), df
-
-    xl = pd.ExcelFile(filepath)
-    sheet_names = xl.sheet_names
-
-    # Identify source, execution, and adjudicated score sheets
-    source_df = pd.read_excel(xl, sheet_name=sheet_names[0])
-    scores_df = pd.read_excel(xl, sheet_name=sheet_names[-1])
-
-    # Normalize column names
-    source_df.columns = [c.strip() for c in source_df.columns]
-    scores_df.columns = [c.strip() for c in scores_df.columns]
-
-    # Filter strictly to canonical 80 cases (exclude overflow & human cohorts)
-    canonical_sources = source_df[
-        source_df["Case ID"].astype(str).str.contains("GD-|CR-", regex=True)
-    ].copy()
-    canonical_sources = canonical_sources[
-        ~canonical_sources["Case ID"].astype(str).str.contains("OVERFLOW|HF-GD-008|HF-GD-009|HF-GD-010|LIT-004", regex=True)
-    ]
-
-    valid_case_ids = set(canonical_sources["Case ID"].unique())
-    df = scores_df[scores_df["Case ID"].isin(valid_case_ids)].copy()
-
-    # Keep primary 4 AI models only
-    df = df[df["Model Name"].isin(MODELS)].copy()
-
-    return canonical_sources, df
+def holm_adjust(p_values):
+    """Return step-down Holm-adjusted p-values in their original order."""
+    p = np.asarray(p_values, dtype=float)
+    order = np.argsort(p)
+    adjusted = np.empty(len(p), dtype=float)
+    running = 0.0
+    for rank, idx in enumerate(order):
+        running = max(running, (len(p) - rank) * p[idx])
+        adjusted[idx] = min(1.0, running)
+    return adjusted.tolist()
 
 
-def compute_chab_scores(df: pd.DataFrame) -> pd.DataFrame:
-    """Computes composite 0-100 CHAB Score from D1-D9 adjudicated domain ratings."""
-    domain_cols = [f"D{i}" for i in range(1, 10)]
-    missing_cols = [c for c in domain_cols if c not in df.columns]
+def bca_interval(values, rng):
+    values = np.asarray(values, dtype=float)
+    result = stats.bootstrap(
+        (values,), np.mean, confidence_level=0.95, n_resamples=N_BOOT,
+        method="BCa", random_state=rng,
+    )
+    return [float(result.confidence_interval.low), float(result.confidence_interval.high)]
 
-    if missing_cols:
+
+def load_canonical_data(path=INPUT):
+    if not path.exists():
+        raise FileNotFoundError(
+            "Restricted row-level adjudicator scoring data were not found at "
+            f"{path}. This file is not redistributed in the public repository "
+            "because of evaluator confidentiality and data-access restrictions. "
+            "An authorized auditor must supply data/CHAB-2026_Restricted_Rater_Scores.csv "
+            "locally. See the Data Availability Statement in README.md."
+        )
+    frame = pd.read_csv(path)
+    frame.columns = [str(c).strip() for c in frame.columns]
+    aliases = {
+        "Case_ID": "Case ID", "Model_Name": "Model Name",
+        "Source_Type": "Source Type", "CCI_Score": "CCI Score",
+        "Safety_Severity": "Safety Severity",
+    }
+    frame = frame.rename(columns={k: v for k, v in aliases.items() if k in frame.columns})
+    required = {"Case ID", "Model Name", "Source Type", "CCI Score", "Safety Severity", *DOMAIN_WEIGHTS}
+    missing = sorted(required - set(frame.columns))
+    if missing:
+        raise ValueError(f"Restricted score file is missing required columns: {missing}")
+
+    frame["Case ID"] = frame["Case ID"].astype(str).str.strip()
+    frame["Model Name"] = frame["Model Name"].astype(str).str.strip()
+    frame["Source Type"] = frame["Source Type"].astype(str).str.strip()
+    frame["Safety Severity"] = frame["Safety Severity"].astype(str).str.strip()
+
+    # Human-reference rows are excluded by retaining only the four prespecified AI arms.
+    frame = frame[frame["Model Name"].isin(MODELS)].copy()
+    overflow_mask = frame["Case ID"].str.contains("OVERFLOW", case=False, na=False)
+    overflow_patterns = "|".join(re.escape(value) for value in sorted(OVERFLOW_IDS, key=len, reverse=True))
+    overflow_mask |= frame["Case ID"].str.contains(
+        r"(?:^|[-/])(?:" + overflow_patterns + r")$", case=False, na=False, regex=True
+    )
+    frame = frame.loc[~overflow_mask].copy()
+
+    if frame["Case ID"].nunique() != 80 or len(frame) != 320:
         raise ValueError(
-            f"DATA INTEGRITY ERROR: Missing required domain columns {missing_cols} in scoring sheet. "
-            "All 9 domains (D1-D9) must be present to compute the weighted CHAB score."
+            "Canonical primary cohort must contain exactly 80 cases and 320 "
+            f"AI model-case rows after exclusions; found {frame['Case ID'].nunique()} "
+            f"cases and {len(frame)} rows."
         )
+    if frame.duplicated(["Case ID", "Model Name"]).any():
+        raise ValueError("Duplicate canonical Case ID × Model Name rows detected.")
+    counts = frame.groupby("Case ID")["Model Name"].nunique()
+    if not (counts == 4).all():
+        raise ValueError("Every canonical case must have exactly one row for each of four AI models.")
+    provenance_counts = frame.groupby("Case ID")["Source Type"].nunique()
+    if not (provenance_counts == 1).all():
+        raise ValueError("Source Type must be constant within each case.")
+    cases = frame[["Case ID", "Source Type"]].drop_duplicates()
+    source_counts = cases["Source Type"].value_counts().to_dict()
+    gd = sum(str(x).lower().startswith("guideline") or str(x).upper() == "GD" for x in cases["Source Type"])
+    cr = sum("published" in str(x).lower() or "case report" in str(x).lower() or str(x).upper() == "CR" for x in cases["Source Type"])
+    if gd != 56 or cr != 24:
+        raise ValueError(f"Expected 56 Guideline-Derived and 24 Published Case Report cases; found GD={gd}, CR={cr}. Source counts: {source_counts}")
 
-    weighted_sum = sum(df[col].astype(float) * DOMAIN_WEIGHTS[col] for col in domain_cols)
-    df["Computed_CHAB_Score"] = 50.0 * weighted_sum
-    return df
+    for col in DOMAIN_WEIGHTS:
+        numeric = pd.to_numeric(frame[col], errors="coerce")
+        if numeric.isna().any() or not numeric.isin([0, 1, 2]).all():
+            raise ValueError(f"{col} must contain only nonmissing integer ratings 0, 1, or 2.")
+        if not np.equal(numeric, np.floor(numeric)).all():
+            raise ValueError(f"{col} contains non-integer ratings.")
+        frame[col] = numeric.astype(int)
+
+    cci = pd.to_numeric(frame["CCI Score"], errors="coerce")
+    if cci.isna().any() or not cci.between(0, 16).all() or not np.equal(cci, np.floor(cci)).all():
+        raise ValueError("CCI Score must be a nonmissing integer on the prespecified 0–16 scale.")
+    frame["CCI Score"] = cci.astype(int)
+    frame["Safety Severity"] = frame["Safety Severity"].str.upper()
+    if not frame["Safety Severity"].isin(SEVERITIES).all():
+        raise ValueError(f"Safety Severity labels must be one of {sorted(SEVERITIES)}.")
+
+    frame["CHAB Score"] = 50.0 * sum(frame[c] * w for c, w in DOMAIN_WEIGHTS.items())
+    frame["Major Safety Error"] = frame["Safety Severity"].isin(["SEV-2", "SEV-3"]).astype(int)
+    return cases, frame
 
 
-def bootstrap_bca_ci(data: np.ndarray, n_resamples: int = 10000, seed: int = 42):
-    """Computes exact 95% BCa bootstrap confidence intervals."""
-    rng = np.random.default_rng(seed)
-    res = stats.bootstrap(
-        (data,),
-        np.mean,
-        n_resamples=n_resamples,
-        confidence_level=0.95,
-        method="BCa",
-        random_state=rng,
-    )
-    return res.confidence_interval.low, res.confidence_interval.high
-
-
-def holm_bonferroni(p_values: list) -> list:
-    """Applies step-down Holm-Bonferroni multiplicity correction."""
-    m = len(p_values)
-    indexed = sorted(enumerate(p_values), key=lambda x: x[1])
-    adjusted = [0.0] * m
-    prev_max = 0.0
-    for rank, (orig_idx, p) in enumerate(indexed):
-        adj_p = min(1.0, max(prev_max, p * (m - rank)))
-        adjusted[orig_idx] = adj_p
-        prev_max = adj_p
-    return adjusted
-
-
-def run_primary_analysis(sources: pd.DataFrame, df: pd.DataFrame):
-    """Executes all confirmatory and secondary statistical tests."""
-    print("=========================================================================")
-    print("        CHAB-2026 AUTHORITATIVE STATISTICAL EXECUTION REPORT             ")
-    print("=========================================================================\n")
-
-    n_cases = df["Case ID"].nunique()
-    n_obs = len(df)
-    print(f"[COHORT VERIFIED] Canonical Cases: N = {n_cases} | Primary Observations: n = {n_obs}\n")
-
-    if n_cases != 80 or n_obs != 320:
-        raise AssertionError(f"Expected N=80 cases and n=320 rows, found N={n_cases}, n={n_obs}")
-
-    # Pivot to Case x Model matrix (80 x 4)
-    pivot_scores = df.pivot(index="Case ID", columns="Model Name", values="Computed_CHAB_Score")[MODELS]
-
-    # 1. Descriptive Summary & 95% BCa CIs
-    print("--- 1. OVERALL CONTINUOUS PERFORMANCE (CHAB SCORE 0-100) ---")
+def descriptive_results(pivot, rng):
+    output = {}
     for model in MODELS:
-        vals = pivot_scores[model].dropna().values
-        mean_val = np.mean(vals)
-        sd_val = np.std(vals, ddof=1)
-        med_val = np.median(vals)
-        q25, q75 = np.percentile(vals, [25, 75])
-        ci_low, ci_high = bootstrap_bca_ci(vals)
-        print(
-            f"{model:<32} | Mean: {mean_val:6.2f} ± {sd_val:5.2f} | "
-            f"Median: {med_val:6.2f} (IQR: {q25:5.2f}-{q75:5.2f}) | "
-            f"95% BCa CI: [{ci_low:6.2f}, {ci_high:6.2f}]"
-        )
+        x = pivot[model].to_numpy(dtype=float)
+        q1, q3 = np.percentile(x, [25, 75])
+        output[MODEL_LABELS[model]] = {
+            "n": int(len(x)), "mean": float(np.mean(x)),
+            "sd": float(np.std(x, ddof=1)), "median": float(np.median(x)),
+            "q1": float(q1), "q3": float(q3), "iqr": float(q3 - q1),
+            "bca_95_ci_mean": bca_interval(x, rng),
+        }
+    return output
 
-    # 2. Primary Omnibus Test: Repeated-Measures Friedman Test (df = 3)
-    friedman_stat, friedman_p = stats.friedmanchisquare(
-        pivot_scores[MODELS[0]],
-        pivot_scores[MODELS[1]],
-        pivot_scores[MODELS[2]],
-        pivot_scores[MODELS[3]],
-    )
-    print(f"\n[PRIMARY OMNIBUS] Friedman Test (df = 3): chi^2(3) = {friedman_stat:.4f}, P = {friedman_p:.4e}\n")
 
-    # 3. Post-Hoc Pairwise Wilcoxon Signed-Rank + Holm-Bonferroni
-    print("--- 2. POST-HOC PAIRWISE MODEL CONTRASTS (WILCOXON + HOLM-BONFERRONI) ---")
-    pairs = []
-    raw_pvals = []
-    for i in range(len(MODELS)):
-        for j in range(i + 1, len(MODELS)):
-            m1, m2 = MODELS[i], MODELS[j]
-            diff = pivot_scores[m1].values - pivot_scores[m2].values
-            mean_diff = np.mean(diff)
-            sd_diff = np.std(diff, ddof=1)
-            dz = mean_diff / sd_diff if sd_diff > 0 else 0.0
-            ci_l, ci_h = bootstrap_bca_ci(diff)
-            w_stat, p_val = stats.wilcoxon(pivot_scores[m1], pivot_scores[m2])
-            pairs.append((m1, m2, mean_diff, ci_l, ci_h, dz, w_stat, p_val))
-            raw_pvals.append(p_val)
+def run_analysis(cases, frame):
+    rng = np.random.default_rng(SEED)
+    pivot = frame.pivot(index="Case ID", columns="Model Name", values="CHAB Score").reindex(columns=MODELS)
+    if pivot.isna().any().any():
+        raise ValueError("Incomplete matched score matrix; all 80 cases need four model scores.")
 
-    adj_pvals = holm_bonferroni(raw_pvals)
-    for idx, (m1, m2, m_diff, ci_l, ci_h, dz, w_stat, p_raw) in enumerate(pairs):
-        print(
-            f"{m1} vs. {m2}:\n"
-            f"   Delta = {m_diff:+6.2f} (95% BCa CI: [{ci_l:+6.2f}, {ci_h:+6.2f}]) | "
-            f"Cohen's dz = {dz:.3f} | W = {w_stat:.1f} | P_raw = {p_raw:.4e} | P_adj = {adj_pvals[idx]:.4f}"
-        )
+    desc = descriptive_results(pivot, rng)
+    friedman = stats.friedmanchisquare(*(pivot[m].to_numpy() for m in MODELS))
 
-    # 4. Primary Composite Safety Analysis (SEV-2 / SEV-3 Exact McNemar)
-    print("\n--- 3. PRIMARY SAFETY ANALYSIS (SEV-2 / SEV-3 EXACT MCNEMAR) ---")
-    df["Major_Safety_Error"] = df["Safety Error (SEV)"].isin(["SEV-2", "SEV-3"]).astype(int)
-    pivot_safety = df.pivot(index="Case ID", columns="Model Name", values="Major_Safety_Error")[MODELS]
+    pairwise = []
+    raw_p = []
+    for a, b in itertools.combinations(MODELS, 2):
+        x, y = pivot[a].to_numpy(), pivot[b].to_numpy()
+        diff = x - y
+        test = stats.wilcoxon(x, y, alternative="two-sided", method="auto")
+        sd = float(np.std(diff, ddof=1))
+        pairwise.append({
+            "model_1": MODEL_LABELS[a], "model_2": MODEL_LABELS[b],
+            "mean_paired_difference": float(np.mean(diff)),
+            "cohens_dz": float(np.mean(diff) / sd) if sd else None,
+            "wilcoxon_statistic": float(test.statistic),
+            "p_raw": float(test.pvalue),
+            "difference_bca_95_ci": bca_interval(diff, rng),
+        })
+        raw_p.append(float(test.pvalue))
+    for item, adjusted in zip(pairwise, holm_adjust(raw_p)):
+        item["p_holm"] = adjusted
 
-    for model in MODELS:
-        err_count = pivot_safety[model].sum()
-        print(f"{model:<32} | SEV-2/3 Errors: {err_count}/80 ({err_count / 80 * 100:.2f}%)")
+    cci_by_case = frame.groupby("Case ID")["CCI Score"].first()
+    tier3_ids = set(cci_by_case[cci_by_case.between(11, 16)].index)
+    if len(tier3_ids) != 48:
+        raise ValueError(f"Expected 48 Tier 3 cases (CCI 11–16); found {len(tier3_ids)}.")
+    tier3_pivot = pivot.loc[sorted(tier3_ids)]
+    tier3 = {
+        MODEL_LABELS[m]: {
+            "n": int(tier3_pivot[m].count()),
+            "mean": float(tier3_pivot[m].mean()),
+            "sd": float(tier3_pivot[m].std(ddof=1)),
+            "median": float(tier3_pivot[m].median()),
+        } for m in MODELS
+    }
+    tier3_test = stats.friedmanchisquare(*(tier3_pivot[m].to_numpy() for m in MODELS))
 
-    safety_pairs = []
-    safety_raw_p = []
-    for i in range(len(MODELS)):
-        for j in range(i + 1, len(MODELS)):
-            m1, m2 = MODELS[i], MODELS[j]
-            s1, s2 = pivot_safety[m1].values, pivot_safety[m2].values
-            # Discordant pairs: b (m1=1, m2=0), c (m1=0, m2=1)
-            b = np.sum((s1 == 1) & (s2 == 0))
-            c = np.sum((s1 == 0) & (s2 == 1))
-            n_disc = b + c
-            p_exact = stats.binomtest(min(b, c), n=n_disc, p=0.5).pvalue if n_disc > 0 else 1.0
-            safety_pairs.append((m1, m2, b, c, p_exact))
-            safety_raw_p.append(p_exact)
+    safety = frame.pivot(index="Case ID", columns="Model Name", values="Major Safety Error").reindex(columns=MODELS)
+    safety_rates = {
+        MODEL_LABELS[m]: {
+            "events": int(safety[m].sum()), "n": int(len(safety)),
+            "rate": float(safety[m].mean()),
+        } for m in MODELS
+    }
+    safety_pairs, safety_raw = [], []
+    for a, b in itertools.combinations(MODELS, 2):
+        x, y = safety[a].to_numpy(), safety[b].to_numpy()
+        b10 = int(np.sum((x == 1) & (y == 0)))
+        b01 = int(np.sum((x == 0) & (y == 1)))
+        discordant = b10 + b01
+        p = float(stats.binomtest(min(b10, b01), n=discordant, p=0.5, alternative="two-sided").pvalue) if discordant else 1.0
+        safety_pairs.append({
+            "model_1": MODEL_LABELS[a], "model_2": MODEL_LABELS[b],
+            "model_1_error_only": b10, "model_2_error_only": b01,
+            "discordant_pairs": discordant, "p_exact_mcnemar": p,
+        })
+        safety_raw.append(p)
+    for item, adjusted in zip(safety_pairs, holm_adjust(safety_raw)):
+        item["p_holm"] = adjusted
 
-    safety_adj_p = holm_bonferroni(safety_raw_p)
-    for idx, (m1, m2, b, c, p_raw) in enumerate(safety_pairs):
-        print(
-            f"{m1} vs. {m2}: Discordant (b={b}, c={c}) | "
-            f"Exact McNemar P_raw = {p_raw:.4f} | P_adj = {safety_adj_p[idx]:.4f}"
-        )
+    merged = frame.merge(cases, on=["Case ID", "Source Type"], how="left")
+    merged = merged.rename(columns={"CHAB Score": "Score"})
+    mixed = smf.mixedlm("Score ~ C(Q('Model Name')) * C(Q('Source Type'))", merged, groups=merged["Case ID"])
+    mixed_fit = mixed.fit(reml=True, method="lbfgs")
+    mixed_results = {
+        "formula": "Score ~ Model * Provenance + (1 | Case_ID)",
+        "n_cases": int(merged["Case ID"].nunique()), "n_observations": int(len(merged)),
+        "converged": bool(mixed_fit.converged),
+        "coefficients": {str(k): float(v) for k, v in mixed_fit.fe_params.items()},
+        "p_values": {str(k): float(v) for k, v in mixed_fit.pvalues.items()},
+        "aic": float(mixed_fit.aic) if np.isfinite(mixed_fit.aic) else None,
+        "bic": float(mixed_fit.bic) if np.isfinite(mixed_fit.bic) else None,
+    }
 
-    # 5. Case Provenance Linear Mixed-Effects Model (GD vs. CR)
-    print("\n--- 4. CASE PROVENANCE MIXED-EFFECTS MODEL (GD vs. CR) ---")
-    merged = df.merge(sources[["Case ID", "Source Type"]], on="Case ID", how="left")
-    merged = merged.rename(columns={"Computed_CHAB_Score": "Score", "Model Name": "Model", "Source Type": "Provenance"})
-    lme = smf.mixedlm("Score ~ C(Model) * C(Provenance)", merged, groups=merged["Case ID"])
-    lme_fit = lme.fit(reml=True)
-    print(lme_fit.summary().tables[1])
+    return {
+        "analysis_metadata": {
+            "canonical_cases": 80, "ai_models": 4, "canonical_model_case_rows": 320,
+            "guideline_derived_cases": 56, "published_case_report_cases": 24,
+            "overflow_cases_excluded": 4, "human_reference_cohorts_excluded": True,
+            "domain_weights": DOMAIN_WEIGHTS, "bootstrap_resamples": N_BOOT,
+            "bootstrap_seed": SEED,
+        },
+        "descriptive_statistics": desc,
+        "primary_friedman": {
+            "test": "Repeated-measures Friedman", "df": 3,
+            "statistic": float(friedman.statistic), "p_value": float(friedman.pvalue),
+        },
+        "pairwise_wilcoxon_holm": pairwise,
+        "tier3_cci_11_16": {
+            "n_cases": len(tier3_ids), "descriptives": tier3,
+            "friedman": {"df": 3, "statistic": float(tier3_test.statistic), "p_value": float(tier3_test.pvalue)},
+        },
+        "safety_sev2_sev3": {"rates": safety_rates, "exact_mcnemar_pairs_holm": safety_pairs},
+        "provenance_mixed_effects": mixed_results,
+    }
+
+
+def print_summary(results):
+    print("\nCHAB-2026 VERIFIED STATISTICAL SUMMARY")
+    print("=" * 92)
+    print(f"{'Model':<24} {'Mean':>8} {'SD':>8} {'Median':>8} {'IQR':>8} {'BCa 95% CI':>24}")
+    for model, d in results["descriptive_statistics"].items():
+        lo, hi = d["bca_95_ci_mean"]
+        print(f"{model:<24} {d['mean']:>8.2f} {d['sd']:>8.2f} {d['median']:>8.2f} {d['iqr']:>8.2f} [{lo:.2f}, {hi:.2f}]")
+    f = results["primary_friedman"]
+    print(f"\nPrimary Friedman: chi-square={f['statistic']:.4f}, df={f['df']}, p={f['p_value']:.6g}")
+    print(f"Tier 3 Friedman: chi-square={results['tier3_cci_11_16']['friedman']['statistic']:.4f}, p={results['tier3_cci_11_16']['friedman']['p_value']:.6g}")
+    print("\nPairwise Wilcoxon (Holm-adjusted)")
+    for p in results["pairwise_wilcoxon_holm"]:
+        print(f"  {p['model_1']} vs {p['model_2']}: dz={p['cohens_dz']:.3f}, p_adj={p['p_holm']:.6g}")
+    print("\nSafety SEV-2/3 exact McNemar (Holm-adjusted)")
+    for p in results["safety_sev2_sev3"]["exact_mcnemar_pairs_holm"]:
+        print(f"  {p['model_1']} vs {p['model_2']}: p_adj={p['p_holm']:.6g}")
+    print("\nProvenance mixed-effects model converged:", results["provenance_mixed_effects"]["converged"])
+
+
+def main():
+    cases, frame = load_canonical_data()
+    results = run_analysis(cases, frame)
+    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    OUTPUT.write_text(json.dumps(results, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    print_summary(results)
+    print(f"\nMachine-readable results written to: {OUTPUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
-    WORKBOOK_PATH = "data/CHAB-2026_Authoritative_Master_Audit_Workbook_FINAL.xlsx"
     try:
-        sources_data, ratings_data = load_and_validate_workbook(WORKBOOK_PATH)
-        scored_data = compute_chab_scores(ratings_data)
-        run_primary_analysis(sources_data, scored_data)
+        main()
     except Exception as exc:
-        print(f"\n[EXECUTION HALTED] {exc}", file=sys.stderr)
+        print(f"ANALYSIS NOT RUN: {exc}", file=sys.stderr)
         sys.exit(1)
-
-        CSV_PATH = "data/CHAB-2026_Adjudicated_9Domain_Master_Scores.csv"
-    sources_data, ratings_data = load_and_validate_dataset(CSV_PATH)
-
-   
-   
-

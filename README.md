@@ -1,36 +1,79 @@
 # CHAB-2026: Cardiology AI Benchmark
 
-An open-science replication codebase and audit registry for the Cardiology AI Benchmark (CHAB-2026). This repository hosts the canonical evaluation registers, standardized clinical text prompt matrices, and executable non-parametric statistical models to guarantee absolute research integrity.
+This repository contains the public benchmark materials and reproducibility code for the Cardiology Humanoid AI Benchmark (CHAB-2026).
 
-## Repository Directory Architecture
-- **`data/CHAB-2026_Authoritative_Master_Audit_Workbook_FINAL.xlsx`**: Authoritative master workbook containing the complete case register (`SourceRegister`, n=80), execution logs (`ExecutionLog`, n=320), and dual-reviewer grading matrices (`ReviewLog`, n=640 records).
-- **`prompts/system_prompt.txt`**: Verbatim consultant baseline system prompt instructing models to format answers into 8 uniform clinical headers.
-- **`prompts/zero_shot_cot_template.json`**: Standardized JSON configuration wrapper forcing Zero-Shot Chain-of-Thought determinism.
-- **`analysis_pipeline.py`**: Executable Python validation script running the locked primary and secondary statistical protocols.
-- **`LICENSE`**: MIT open-source licensing agreement.
+## Registration
 
-## Operational Protocol & Study Design
-- **Primary Population Boundary**: Exactly 80 canonical clinical cases (56 Guideline-Derived [GD Track] and 24 peer-reviewed Published Case Reports [CR Track]).
-- **Arm Allocation**: Paired case-matched design (within-subject). Each individual case serves as its own direct control across models.
-- **Registered Model Arms**: Model Alpha (GPT-5), Model Beta (Claude 3.5 Sonnet), Model Gamma (Gemini 1.5 Pro), and Model Delta (DeepSeek-V3).
-- **Continuous Primary Outcome**: Composite CHAB Score (0–100% scale) derived from an adjudicated 9-domain weighted linear combination.
-- **Categorical Safety Endpoint**: Binary presence of a Major Safety Error defined under the prespecified SEV-2/SEV-3 composite endpoint.
-- **Open Science Framework (OSF) Registry ID**: 237wu (URL: https://osf.io)
+- **OSF pre-registration:** https://osf.io/237wu
+- **OSF registration ID:** `237wu`
 
-## Confirmatory Statistical Hierarchy (Primary SAP)
-1. **Continuous Overall Analysis**: Global variance is analyzed strictly via a repeated-measures non-parametric **Friedman test with 3 degrees of freedom (df = 3)**, yielding the locked verification statistic of **χ²(3) = 68.35, P < 0.001**.
-2. **Post-Hoc Pairwise Transformations**: Continuous cross-model deltas are evaluated via two-sided paired Wilcoxon signed-rank tests controlled for multiplicity via step-down **Holm-Bonferroni corrections** at familywise α = 0.05. Continuous uncertainty intervals are mapped via 10,000-resample non-parametric bias-corrected and accelerated (BCa) bootstrap vectors clustered by case ID.
-3. **Safety Performance Inference**: Matched categorical error rates are analyzed strictly via **pairwise exact McNemar tests** utilizing identical case IDs across the six model pairs. Multiplicity is managed via a separate Holm-Bonferroni correction vector.
+## Publicly available research assets
 
-## Exploratory & Sensitivity Classifications
-- **Cochran's Q Test**: The multi-group categorical statistic (Q = 17.65, P = 0.042) is re-allocated strictly as an exploratory global descriptive check.
-- **Human Clinical Cohorts**: Junior Resident (74.20% ± 11.40%) and Attending Faculty (94.80% ± 4.20%) observations are isolated under secondary descriptive partitions to prevent primary df=3 inference contamination.
-- **Complexity Tracking**: Point-by-point score degradation across the continuous 5–16 Case Complexity Index (CCI) range is tracked descriptively using smoothed LOESS non-linear regression splines. 
+The public repository provides the 80-case benchmark corpus and case-provenance metadata, standardized system prompts, the nine-domain (D1–D9) scoring rubrics, and executable statistical analysis code in `analysis_pipeline.py`. These materials document the benchmark construction and analysis specification.
 
-## Verification Execution
-To verify data constants directly inside the repository workspace environment, run:
+## Data availability and restriction notice
+
+Individual row-level raw scoring sheets from the independent cardiology adjudication panel are **not publicly redistributed** because of post-study evaluator confidentiality and data-access restrictions. Aggregated benchmark summaries are reported in the manuscript.
+
+The executable pipeline expects an authorized auditor to supply the restricted file locally at:
+
+```
+data/CHAB-2026_Restricted_Rater_Scores.csv
+```
+
+This restricted file is deliberately not included in the public repository. If it is absent, the pipeline stops with an explanatory message referring to this Data Availability Statement; it does not substitute placeholder data or hardcoded manuscript statistics.
+
+## Analysis protocol
+
+The pipeline computes the weighted nine-domain CHAB Score on a 0–100 scale using the prespecified weights:
+
+| Domain | Weight |
+|---|---:|
+| D1 | 0.20 |
+| D2 | 0.10 |
+| D3 | 0.15 |
+| D4 | 0.15 |
+| D5 | 0.10 |
+| D6 | 0.15 |
+| D7 | 0.05 |
+| D8 | 0.05 |
+| D9 | 0.05 |
+
+The primary analysis is restricted to the four AI model arms and the 80 canonical cases (56 Guideline-Derived; 24 Published Case Reports). Human-reference cohorts and the four noncanonical overflow cases are excluded from primary inference. The analysis includes descriptive statistics and 10,000-resample BCa confidence intervals, the repeated-measures Friedman test, six paired Wilcoxon tests with Holm adjustment and Cohen's dz, CCI Tier 3 subgroup summaries, six two-sided exact McNemar tests for the SEV-2/SEV-3 composite with Holm adjustment, and a case-level random-intercept linear mixed-effects provenance model.
+
+## Repository layout
+
+```
+.
+├── analysis_pipeline.py
+├── analysis/
+│   └── analysis_code/
+│       └── sap_models.py
+├── data/
+│   ├── [public benchmark corpus and provenance metadata]
+│   └── [restricted rater-score CSV supplied locally; not committed]
+├── prompts/
+│   ├── system_prompt.txt
+│   └── zero_shot_cot_template.json
+├── results/
+│   └── verified_sap_outputs.json  # generated locally
+├── Dockerfile
+├── requirements.txt
+└── README.md
+```
+
+## Run locally
+
+Use Python 3.10.12 and install the pinned dependencies:
+
 ```bash
+python3 -m pip install -r requirements.txt
+python3 -m py_compile analysis_pipeline.py
 python3 analysis_pipeline.py
 ```
 
+A successful analysis writes computed results to `results/verified_sap_outputs.json`. Without the restricted auditor file, the script exits intentionally and explains the data-access restriction.
 
+## Runtime and dependencies
+
+The Dockerfile uses the pinned Python 3.10.12 slim image and installs the dependencies in `requirements.txt`.
